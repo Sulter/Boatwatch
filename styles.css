@@ -1,0 +1,21 @@
+#tmp {
+    display: inline-block;
+    color: red;
+}
+
+#humidity {
+    display: inline-block;
+    color: blue;
+}
+#time {
+    display: inline-block;
+}
+#plot{
+    width: 650px;
+    transition:width 0.5s;
+}
+#plot:focus{
+    width:100%;
+    outline:0;
+    transition:width 0.5s;
+}
