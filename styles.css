@@ -1,21 +1,26 @@
+.column {
+    float: left;
+    width: 33%;
+}
+
+.row: after {
+    content: "";
+    display: table;
+    clear: both;
+}
+
 #tmp {
-    display: inline-block;
     color: red;
 }
 
+#dewPoint {
+    color: green;
+}
+
 #humidity {
-    display: inline-block;
     color: blue;
 }
-#time {
-    display: inline-block;
-}
-#plot{
+
+#plot {
     width: 650px;
-    transition:width 0.5s;
-}
-#plot:focus{
-    width:100%;
-    outline:0;
-    transition:width 0.5s;
 }

@@ -1,21 +1,56 @@
 <!DOCTYPE html>
-<html>
-    <head>
-        <meta charset="utf-8"/> 
-        <link rel="stylesheet" href="styles.css">
+<html><head>
+<meta content="text/html; charset=utf-8" http-equiv="content-type"/>
+        <meta charset="utf-8"/>
+        <link href="styles.css" rel="stylesheet"/>
         <title>Boatdata</title>
     </head>
     <body>
         <h1>Boatwatch</h1>
+        <a href="" id="video1">
         <h2>Video</h2>
-        <iframe frameborder="0" height="500" src=":8081" width="650"></iframe>
+        <iframe frameborder="0" height="500" id="video2" src="empty" width="650"></iframe>
+        </a>
         <h2>Sensordata</h2>
-        <p id="tmp">28.9C</p>
-        <p id="humidity">25.0%</p>
-        <p id="time">Sun Feb 24 12:49:36 2019</p>
+        <p id="time">Mon Feb 25 23:00:26 2019</p>
+        <div class="row">
+          <p class="column">Temperature</p>
+          <p class="column">Humidity</p>
+          <p class="column">Dew Point</p>
+        </div>
+
+        <div class="row">
+          <p class="column" id="tmp">30.2</p>
+          <p class="column" id="humidity">27.6</p>
+          <p class="column" id="dewPoint">9.80ºC</p>
+        </div>
         <p></p>
-        <img tabindex="0" id="plot" alt="plot" src="plot.png"/>
+        <a href="plot.png">
+        <img alt="plot" id="plot" src="plot.png" tabindex="0"/>
+        </a>
         <script>
-        </script> 
-    </body>
-</html>
+        //calculate dew point
+        var temp = document.getElementById("tmp").innerText;
+        var humidity = document.getElementById("humidity").innerText;
+        var dew = (Math.pow((humidity/100),(1/8)))*(112+0.9*temp)+0.1*temp-112;
+        document.getElementById("dewPoint").innerText = dew.toFixed(2);
+
+        //add units to measurments
+        document.getElementById("tmp").innerText += "ºC"
+        document.getElementById("humidity").innerText += "%"
+        document.getElementById("dewPoint").innerText += "ºC"
+
+        //calc time since last measurment
+        var lastMeasurment = Date.parse(document.getElementById("time").innerText);
+        var nowDate = new Date();
+        var minutesDiff = Math.round((nowDate.getTime() - lastMeasurment) / 1000 / 60);
+        document.getElementById("time").innerText = "Last measurment: " + minutesDiff + "min ago";
+
+        //add correct url
+        var url = "http://" + window.location.hostname + ":8081";
+        document.getElementById("video1").href = url;
+        document.getElementById("video2").src = url;
+        console.log(url);
+        </script>
+
+</body></html>
