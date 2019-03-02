@@ -13,21 +13,25 @@ Quick hack project for data collection from my boat, and some automatic control.
 
 ## Setup etc.
 Runs on odroid C1+, but should run on anything that works with wiringPi.
+
 Build the dht22 C dynamic lib using build.sh script
+
 Then just use the rc.local and move the files so it fits
+
 Sakis3gz needs to be compiled from source
 
 [Sakis3g](https://github.com/Trixarian/sakis3g-source)
+
 [dht22](https://github.com/technion/lol_dht22) (with changes for easier use)
 
 ### Requires
-motion (for the webcam stream)
-wiringPi (dht22)
-binutils (building dht22)
-python3
-bs4
-matplotlib/pylab
-sakis3gz (usbmodem switcher/connector)
+* motion (for the webcam stream)
+* wiringPi (dht22)
+* binutils (building dht22)
+* python3
+* bs4
+* matplotlib/pylab
+* sakis3gz (usbmodem switcher/connector)
 
 ## Hardware
 * dht22 data <-> Pin 7 @ 3.3V
