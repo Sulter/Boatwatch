@@ -8,6 +8,7 @@ Quick hack project for data collection from my boat, and some automatic control.
 * Display camera (done)
 * Dynamic dns setup (done)
 * PID control of dehumidifier with relay to keep humidity below 60% (WIP)
+* Measure battery voltage (WIP)
 * Add pressure sensor to measure dew point (WIP)
 
 ## Setup etc.
