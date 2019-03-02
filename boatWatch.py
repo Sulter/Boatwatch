@@ -1,4 +1,5 @@
 #!/usr/bin/python3
+import syslog
 import ctypes
 import os
 import bs4
@@ -9,7 +10,8 @@ matplotlib.use('Agg')
 import pylab
 import datetime
 
-timeInterval = 10
+timeInterval = 60
+initialWait = 180
 
 class DHT22():
 
@@ -23,8 +25,8 @@ class DHT22():
       txt = inf.read()
       soup = bs4.BeautifulSoup(txt, features="html5lib")
 
-    soup.find(id="tmp").string.replace_with(str(temp) + "C")
-    soup.find(id="humidity").string.replace_with(str(hum) + "%")
+    soup.find(id="tmp").string.replace_with(str(temp))
+    soup.find(id="humidity").string.replace_with(str(hum))
     soup.find(id="time").string.replace_with(time.asctime(time.localtime(timeStamp)))
     # save the file again
     with open(file, "w") as outf:
@@ -32,10 +34,10 @@ class DHT22():
 
   def updateDataFile(self, temp, hum, time, file = dataFilePath):
     if not os.path.isfile(file):
-      with open(file, 'w') as the_file:                                                                                                                                                                              
-        the_file.write("Temperature (C), humidity (%), time (unix)\n")      
+      with open(file, 'w') as the_file:
+        the_file.write("Temperature (C), humidity (%), time (unix)\n")
     with open(file, 'a') as the_file:
-      the_file.write(str(temp) + ", " + str(hum) + ", " + str(time) + "\n")
+      the_file.write(str(round(temp, 2)) + ", " + str(round(hum, 2)) + ", " + str(time) + "\n")
 
   def readDHT22(self):
     t = ctypes.c_float()
@@ -69,22 +71,28 @@ class DHT22():
         else:
           firstRow = False
 
-      pylab.figure(figsize=(15,8))
+ 
+      pylab.figure(figsize=(30,8))
       pylab.xticks(rotation=15)
 
       ax=pylab.gca()
+
+      loc = matplotlib.dates.AutoDateLocator(minticks=12, maxticks=24)
+      ax.xaxis.set_major_locator(loc)
+
       xfmt = matplotlib.dates.DateFormatter('%Y-%m-%d %H:%M')
       ax.xaxis.set_major_formatter(xfmt)
 
       pylab.plot(time, temp, 'r', label='Temperature C')
       pylab.plot(time, humidity, 'b', label='Humidity %')
+      pylab.grid()
       pylab.legend(loc='best')
 
-
-      pylab.savefig(imageFile, dpi = 100)
+      pylab.savefig(imageFile, dpi = 150)
       pylab.close('all')
 
 if __name__ == "__main__":
+  time.sleep(initialWait)
   dht22 = DHT22()
   while 1:
     sensData = dht22.readDHT22()
@@ -92,4 +100,12 @@ if __name__ == "__main__":
       dht22.updateHtmlFile(round(sensData["temp"], 2), round(sensData["hum"], 2), sensData["time"])
       dht22.updateDataFile(sensData["temp"], sensData["hum"], sensData["time"])
       dht22.updatePlotFile()
+      response = os.system("ping -c 1 google.com")
+      if response != 0:
+        syslog.syslog("Can't ping google, trying one more time, restarting")
+        time.sleep(timeInterval)
+        response = os.system("ping -c 1 google.com")
+        if response != 0:
+          syslog.syslog("Internet down, rebooting")
+          os.system("reboot")
     time.sleep(timeInterval)
